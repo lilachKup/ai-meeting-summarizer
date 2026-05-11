@@ -1,25 +1,34 @@
 import styles from "./ResultsPanel.module.css";
 
+// Detects if a string is mostly Hebrew/Arabic (RTL)
+function detectDirection(text) {
+  if (!text) return "ltr";
+  const rtlChars = (text.match(/[\u0590-\u05FF\u0600-\u06FF]/g) || []).length;
+  return rtlChars > text.length * 0.3 ? "rtl" : "ltr";
+}
+
 export default function ResultsPanel({ transcript, summary }) {
+  const dir = detectDirection(summary.summary || transcript);
+
   return (
-    <div className={styles.container}>
-      <Section title="Summary">
+    <div className={styles.container} dir={dir}>
+      <Section title="Summary" dir={dir}>
         <p>{summary.summary}</p>
       </Section>
 
-      <Section title="Participants">
+      <Section title="Participants" dir={dir}>
         <ul>
           {summary.participants.map((p, i) => <li key={i}>{p}</li>)}
         </ul>
       </Section>
 
-      <Section title="Decisions">
+      <Section title="Decisions" dir={dir}>
         <ul>
           {summary.decisions.map((d, i) => <li key={i}>{d}</li>)}
         </ul>
       </Section>
 
-      <Section title="Action Items">
+      <Section title="Action Items" dir={dir}>
         <ul>
           {summary.action_items.map((item, i) => (
             <li key={i}>
@@ -32,17 +41,17 @@ export default function ResultsPanel({ transcript, summary }) {
         </ul>
       </Section>
 
-      <Section title="Full Transcript">
+      <Section title="Full Transcript" dir={detectDirection(transcript)}>
         <p className={styles.transcript}>{transcript}</p>
       </Section>
     </div>
   );
 }
 
-function Section({ title, children }) {
+function Section({ title, children, dir }) {
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>{title}</h3>
+    <div className={styles.section} dir={dir}>
+      <h3 className={styles.sectionTitle} dir={dir}>{title}</h3>
       {children}
     </div>
   );
