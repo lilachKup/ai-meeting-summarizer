@@ -1,13 +1,27 @@
-import openai
+import io
 import os
+
+import openai
 from dotenv import load_dotenv
 
 load_dotenv()
+
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-async def transcribe_audio(audio_bytes: bytes, filename: str) -> str:
-    # Convert uploaded bytes into a file-like object for OpenAI transcription
-    import io
+
+def transcribe_audio(audio_bytes: bytes, filename: str) -> str:
+    """Transcribe audio bytes using OpenAI Whisper API.
+
+    Args:
+        audio_bytes: Raw audio file content.
+        filename: Original filename, used by Whisper to detect format.
+
+    Returns:
+        Transcribed text string.
+
+    Raises:
+        openai.OpenAIError: If the Whisper API call fails.
+    """
     audio_file = io.BytesIO(audio_bytes)
     audio_file.name = filename
 
