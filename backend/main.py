@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import transcribe, summarize
+from routes import transcribe #, summarize
 
 app = FastAPI()
 
@@ -12,4 +12,4 @@ app.add_middleware(
 )
 
 app.include_router(transcribe.router, prefix="/api")
-app.include_router(summarize.router, prefix="/api")
+# app.include_router(summarize.router, prefix="/api")
