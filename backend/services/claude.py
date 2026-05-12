@@ -4,6 +4,7 @@ import re
 
 import anthropic
 from dotenv import load_dotenv
+from config import CLAUDE_MODEL
 
 load_dotenv()
 
@@ -41,7 +42,7 @@ Rules:
 
 def summarize_transcript(transcript: str) -> dict:
     message = client.messages.create(
-        model="claude-haiku-4-5",
+        model=CLAUDE_MODEL,
         max_tokens=2048,
         system=SYSTEM_PROMPT,
         messages=[

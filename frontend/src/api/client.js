@@ -1,6 +1,6 @@
+import config from "../config.js";
 
-const BASE_URL = "http://localhost:8000/api";
-
+const BASE_URL = config.API_BASE_URL;
 
 
 export async function uploadAudio(file) {
