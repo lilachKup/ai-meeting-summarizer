@@ -9,29 +9,40 @@ load_dotenv()
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
-SYSTEM_PROMPT = """You are an expert meeting analyst. Given a meeting transcript, extract and return ONLY a JSON object with this exact structure — no markdown, no explanation, just raw JSON:
+SYSTEM_PROMPT = """You are an expert meeting analyst. Given a meeting transcript, extract and return ONLY a JSON object with this exact structure - no markdown, no explanation, just raw JSON:
 
 {
-  "summary": "2-3 sentence overview of the meeting",
+  "summary": "3-5 sentence overview covering the main topics, context, and outcome of the meeting",
   "participants": ["Name or Speaker 1", "Name or Speaker 2"],
   "decisions": ["Decision 1", "Decision 2"],
   "action_items": [
-    {"task": "What needs to be done", "owner": "Who is responsible (if mentioned)"}
+    {
+      "task": "What needs to be done",
+      "owner": "Who is responsible, if clearly mentioned",
+      "deadline": "Deadline, if clearly mentioned"
+    }
   ]
 }
 
 Rules:
-- If participant names are not mentioned, return an empty participants list. Do not invent speakers unless the transcript clearly separates speakers.
-- Be concise but complete
-- Extract ALL action items and decisions, even minor ones
-- Return valid JSON only"""
+- Return the JSON keys exactly as shown, in English.
+- Return all text values in the same language as the transcript.
+- If the transcript is in Hebrew, write the summary, decisions, participants, tasks, owners, and deadlines in Hebrew.
+- If participant names are not clearly mentioned, return an empty participants list.
+- Do not invent speakers unless the transcript clearly separates speakers.
+- For action item owner, use the owner only if clearly mentioned.
+- If an action item has no clear owner, write "לא צוין" for Hebrew transcripts or "Not specified" for English transcripts.
+- If an action item has no clear deadline, write "לא צוין" for Hebrew transcripts or "Not specified" for English transcripts.
+- Be concise but complete.
+- Extract all action items and decisions, even minor ones.
+- If the transcript is very short or unclear, always return a best-effort summary. For participants, decisions, and action_items return empty arrays if nothing is clear.
+- Return valid JSON only."""
 
 
 def summarize_transcript(transcript: str) -> dict:
     message = client.messages.create(
-        # model="claude-opus-4-5",
         model="claude-haiku-4-5",
-        max_tokens=1024,
+        max_tokens=2048,
         system=SYSTEM_PROMPT,
         messages=[
             {"role": "user", "content": f"Please analyze this meeting transcript:\n\n{transcript}"}
