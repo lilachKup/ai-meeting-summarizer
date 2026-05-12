@@ -2,57 +2,76 @@ import styles from "./ResultsPanel.module.css";
 
 // Detects if a string is mostly Hebrew/Arabic (RTL)
 function detectDirection(text) {
-  if (!text) return "ltr";
-  const rtlChars = (text.match(/[\u0590-\u05FF\u0600-\u06FF]/g) || []).length;
-  return rtlChars > text.length * 0.3 ? "rtl" : "ltr";
+    if (!text) return "ltr";
+    const rtlChars = (text.match(/[\u0590-\u05FF\u0600-\u06FF]/g) || []).length;
+    return rtlChars > text.length * 0.3 ? "rtl" : "ltr";
 }
 
 export default function ResultsPanel({ transcript, summary }) {
-  const dir = detectDirection(summary.summary || transcript);
+    const dir = detectDirection(summary.summary || transcript);
 
-  return (
-    <div className={styles.container} dir={dir}>
-      <Section title="Summary" dir={dir}>
-        <p>{summary.summary}</p>
-      </Section>
+    return (
+        <div className={styles.container} dir={dir}>
+            <Section title="Summary" dir={dir}>
+                <p>{summary.summary}</p>
+            </Section>
 
-      <Section title="Participants" dir={dir}>
-        <ul>
-          {summary.participants.map((p, i) => <li key={i}>{p}</li>)}
-        </ul>
-      </Section>
+            <Section title="Participants" dir={dir}>
+                {summary.participants.length === 0 ? (
+                    <p style={{ color: "#9ca3af", fontStyle: "italic" }}>
+                        {dir === "rtl" ? "לא זוהו משתתפים" : "No participants identified"}
+                    </p>
+                ) : (
+                    <ul>
+                        {summary.participants.map((p, i) => <li key={i}>{p}</li>)}
+                    </ul>
+                )}
+            </Section>
 
-      <Section title="Decisions" dir={dir}>
-        <ul>
-          {summary.decisions.map((d, i) => <li key={i}>{d}</li>)}
-        </ul>
-      </Section>
+            <Section title="Decisions" dir={dir}>
+                {summary.decisions.length === 0 ? (
+                    <p style={{ color: "#9ca3af", fontStyle: "italic" }}>
+                        {dir === "rtl" ? "לא זוהו החלטות" : "No decisions identified"}
+                    </p>
+                ) : (
+                    <ul>
+                        {summary.decisions.map((d, i) => <li key={i}>{d}</li>)}
+                    </ul>
+                )}
+            </Section>
 
-      <Section title="Action Items" dir={dir}>
-        <ul>
-          {summary.action_items.map((item, i) => (
-            <li key={i}>
-              <span className={styles.task}>{item.task}</span>
-              {item.owner && (
-                <span className={styles.owner}> — {item.owner}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </Section>
+            <Section title="Action Items" dir={dir}>
+                {summary.action_items.length === 0 ? (
+                    <p style={{ color: "#9ca3af", fontStyle: "italic" }}>
+                        {dir === "rtl" ? "לא זוהו משימות" : "No action items identified"}
+                    </p>
+                ) : (
+                    <ul>
+                        {summary.action_items.map((item, i) => (
+                            <li key={i}>
+                                <span className={styles.task}>{item.task}</span>
+                                {item.owner && (
+                                    <span className={styles.owner}> — {item.owner}</span>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
-      <Section title="Full Transcript" dir={detectDirection(transcript)}>
-        <p className={styles.transcript}>{transcript}</p>
-      </Section>
-    </div>
-  );
+            </Section>
+
+            <Section title="Full Transcript" dir={detectDirection(transcript)}>
+                <p className={styles.transcript}>{transcript}</p>
+            </Section>
+        </div>
+    );
 }
 
 function Section({ title, children, dir }) {
-  return (
-    <div className={styles.section} dir={dir}>
-      <h3 className={styles.sectionTitle} dir={dir}>{title}</h3>
-      {children}
-    </div>
-  );
+    return (
+        <div className={styles.section} dir={dir}>
+            <h3 className={styles.sectionTitle} dir={dir}>{title}</h3>
+            {children}
+        </div>
+    );
 }
