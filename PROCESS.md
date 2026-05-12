@@ -98,6 +98,7 @@ within the time limit.
 
 ## Time Spent
 
-~5.5 hours total:
+~6 hours total:
 - Day 1: ~3 hours (backend + frontend base)
 - Day 2: ~2.5 hours (UI improvements, RTL support, Word export, prompt refinement)
+- Day 2: ~0.5 hours (backend tests — unit and integration)
