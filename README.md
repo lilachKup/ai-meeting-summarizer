@@ -90,11 +90,34 @@ Frontend runs on http://localhost:5173
 
 ---
 
+## Running on a Different Machine
+
+If you need to change ports or run on a remote server, update the values in:
+
+**`backend/config.py`**
+```python
+ALLOWED_ORIGINS = ["http://localhost:5173"]  # Frontend URL
+CLAUDE_MODEL = "claude-sonnet-4-6"           # Claude model to use
+```
+
+**`frontend/src/config.js`**
+```js
+const config = {
+  API_BASE_URL: "http://localhost:8000/api",  // Backend URL
+};
+```
+
+Also update `backend/config.py` and `frontend/src/config.js` — these are the only 
+environment-specific values hardcoded outside of `.env`.
+
+---
+
 ## Project Structure
 
 ```
 ai-meeting-summarizer/
 ├── backend/
+│   ├── config.py               # Environment-specific configuration
 │   ├── main.py                 # FastAPI app entry point
 │   ├── routes/
 │   │   ├── transcribe.py       # POST /api/transcribe
@@ -107,6 +130,7 @@ ai-meeting-summarizer/
 │   └── requirements.txt
 ├── frontend/
 │   └── src/
+│       ├── config.js           # Environment-specific configuration
 │       ├── api/
 │       │   └── client.js       # All API calls
 │       └── components/
